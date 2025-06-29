@@ -1,0 +1,6 @@
+@_5_days_in_the_clouds_2024.API_HostAddress = http://localhost:5095
+
+GET {{_5_days_in_the_clouds_2024.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,8 @@
+name: Terraform Plan Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
