@@ -10,6 +10,7 @@ jobs:
     env:
       AWS_BUCKET_NAME: ${{ vars.AWS_BUCKET_NAME }}
       AWS_BUCKET_KEY_NAME: ${{ vars.AWS_BUCKET_KEY_NAME }}
+      AWS_DYNAMODB_TABLE: ${{ vars.AWS_DYNAMODB_TABLE }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       WORKING_DIRECTORY: ./terraform
@@ -25,7 +26,8 @@ jobs:
           terraform init \
             -backend-config="bucket=${{ env.AWS_BUCKET_NAME }}" \
             -backend-config="key=${{ env.AWS_BUCKET_KEY_NAME }}" \
-            -backend-config="region=eu-central-1"
+            -backend-config="region=eu-central-1" \
+            -backend-config="dynamodb_table=${{ env.AWS_DYNAMODB_TABLE }}"
         working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - name: Terraform Validate
@@ -33,5 +35,5 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -var-file="env-${{ vars.ENVIRONMENT_NAME }}.tfvars"
         working-directory: ${{ env.WORKING_DIRECTORY }}
