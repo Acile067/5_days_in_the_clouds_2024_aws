@@ -4,5 +4,5 @@ resource aws_instance backend {
   vpc_security_group_ids = [aws_security_group.main.id]
   subnet_id              = aws_subnet.sub1.id
   key_name               = aws_key_pair.main.key_name
-  user_data              = base64encode(file("userdata.sh"))
+  user_data_base64       = base64encode(file("userdata.sh"))
 }
