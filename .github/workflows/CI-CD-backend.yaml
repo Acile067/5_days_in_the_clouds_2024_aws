@@ -1,0 +1,40 @@
+name: CI-CD Backend Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ci-cd-backend:
+    runs-on: ubuntu-latest
+
+    env:
+      WORKING_DIRECTORY: ./5_days_in_the_clouds_2024-api
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Set up EF Core CLI
+        run: dotnet tool install --global dotnet-ef
+
+      - name: Add EF Core CLI to PATH
+        run: echo "${{ github.workspace }}/.dotnet/tools" >> $GITHUB_PATH
+
+      - name: Install NuGet packages
+        run: dotnet restore ${{ env.WORKING_DIRECTORY }}/5_days_in_the_clouds_2024.API/5_days_in_the_clouds_2024.API.csproj
+
+      - name: Build main project
+        run: dotnet build ${{ env.WORKING_DIRECTORY }}/5_days_in_the_clouds_2024.API/5_days_in_the_clouds_2024.API.csproj --configuration Release
+
+      - name: Publish application
+        run: dotnet publish ${{ env.WORKING_DIRECTORY }}/5_days_in_the_clouds_2024.API/5_days_in_the_clouds_2024.API.csproj --configuration Release --output ${{ env.WORKING_DIRECTORY }}/publish --self-contained true -r linux-x64
+
+      - name: Upload published artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-publish
+          path: ${{ env.WORKING_DIRECTORY }}/publish
