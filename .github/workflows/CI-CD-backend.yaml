@@ -24,6 +24,13 @@ jobs:
       - name: Add EF Core CLI to PATH
         run: echo "${{ github.workspace }}/.dotnet/tools" >> $GITHUB_PATH
 
+      - name: Replace connection string
+        run: |
+          CONNECTION_STRING="Server=tcp:my-mssql-db.crsemig2yms8.eu-central-1.rds.amazonaws.com,1433;Initial Catalog=appDb;Persist Security Info=False;User ID=adminuser;Password=${{ secrets.DB_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
+          jq --arg conn "$CONNECTION_STRING" '.ConnectionStrings.DefaultConnection = $conn' \
+          ${{ env.WORKING_DIRECTORY }}/5_days_in_the_clouds_2024.API/appsettings.Development.json > tmp.json && \
+          mv tmp.json ${{ env.WORKING_DIRECTORY }}/5_days_in_the_clouds_2024.API/appsettings.Development.json
+
       - name: Install NuGet packages
         run: dotnet restore ${{ env.WORKING_DIRECTORY }}/5_days_in_the_clouds_2024.API/5_days_in_the_clouds_2024.API.csproj
 
