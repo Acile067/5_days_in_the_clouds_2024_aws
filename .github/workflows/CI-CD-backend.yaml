@@ -55,7 +55,7 @@ jobs:
 
       - name: Copy files to ec2 instance
         env:
-          EC2_SSH_KEY: ${{ secret.EC2_SSH_KEY }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
           EC2_USERNAME: ${{ vars.EC2_USERNAME }}
           EC2_HOST: ${{ vars.EC2_HOST }}
         run: |
@@ -67,7 +67,7 @@ jobs:
 
           ssh-keyscan -H "${{ vars.EC2_HOST }}" >> ~/.ssh/known_hosts
 
-          echo "${{ secret.EC2_SSH_KEY }}" > ssh_key.pem
+          echo "${{ secrets.EC2_SSH_KEY }}" > ssh_key.pem
           chmod 600 ssh_key.pem
 
           ssh -i ssh_key.pem ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }} '
