@@ -1,37 +1,24 @@
-resource aws_lb main {
-  name               = "mainapplicationgateway"
-  internal           = false
-  load_balancer_type = "application"
-
-  security_groups = [aws_security_group.main.id]
-  subnets         = [aws_subnet.backend.id]
+resource aws_apigatewayv2_api main {
+  name          = "mainapplicationgateway"
+  protocol_type = "HTTP"
 }
 
-resource aws_lb_target_group main {
-  name     = "maintargetgroup"
-  port     = 5000
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.main.id
-
-  health_check {
-    path = "/test"
-    port = 5000   
-  }
+resource aws_apigatewayv2_stage main {
+  api_id      = aws_apigatewayv2_api.main.id
+  name        = "mainstage"
+  auto_deploy = true
 }
 
-resource aws_lb_target_group_attachment backend_attach {
-  target_group_arn = aws_lb_target_group.main.arn
-  target_id        = aws_instance.backend.id
-  port             = 5000
+resource "aws_apigatewayv2_integration" "main" {
+  api_id          = aws_apigatewayv2_api.main.id
+  integration_type = "http_proxy"
+  integration_uri  = "http://${aws_instance.main.public_ip}:5000/{proxy}"
+  integration_method = "ANY"
+  connection_type = "INTERNET"
 }
 
-resource aws_lb_listener listener {
-  load_balancer_arn = aws_lb.main.arn
-  port              = 80
-  protocol          = "HTTP"
-
-  default_action {
-    target_group_arn = aws_lb_target_group.main.arn
-    type             = "forward"
-  }
+resource "aws_apigatewayv2_route" "main" {
+  api_id    = aws_apigatewayv2_api.main.id
+  route_key = "ANY /{proxy+}"
+  target    = "integrations/${aws_apigatewayv2_integration.main.id}"
 }
