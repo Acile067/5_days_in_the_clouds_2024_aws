@@ -53,6 +53,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
+      - name: Apply EF Core migrations
+        run: |
+          echo "Applying EF Core migrations…"
+          dotnet ef database update --project ${{ env.WORKING_DIRECTORY }}/5_days_in_the_clouds_2024.API/5_days_in_the_clouds_2024.API.csproj --connection "Server=tcp:my-mssql-db.crsemig2yms8.eu-central-1.rds.amazonaws.com,1433;Initial Catalog=appDb;Persist Security Info=False;User ID=adminuser;Password=${{ secrets.DB_PASSWORD }};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
+
       - name: Copy files to ec2 instance
         env:
           EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}

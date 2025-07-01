@@ -4,7 +4,7 @@
   load_balancer_type = "application"
 
   security_groups = [aws_security_group.main.id]
-  subnets         = [aws_subnet.sub1.id]
+  subnets         = [aws_subnet.backend.id]
 }
 
 resource aws_lb_target_group main {

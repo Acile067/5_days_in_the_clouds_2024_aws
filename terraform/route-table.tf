@@ -8,6 +8,11 @@ resource aws_route_table main {
 }
 
 resource aws_route_table_association rta1 {
-  subnet_id      = aws_subnet.sub1.id
+  subnet_id      = aws_subnet.backend.id
+  route_table_id = aws_route_table.main.id
+}
+
+resource aws_route_table_association rta2 {
+  subnet_id      = aws_subnet.database.id
   route_table_id = aws_route_table.main.id
 }
