@@ -10,7 +10,7 @@ locals {
   parsed_secret = jsondecode(data.aws_secretsmanager_secret_version.db_password_version.secret_string)
 }
 
-resource aws_db_instance mssql {
+/*resource aws_db_instance mssql {
   identifier           = "my-mssql-db"
   engine               = "sqlserver-ex"
   engine_version       = "15.00.4430.1.v1"
@@ -20,4 +20,4 @@ resource aws_db_instance mssql {
   password             = local.parsed_secret["dbpassword"]
   publicly_accessible  = true
   skip_final_snapshot  = true
-}
+}*/
