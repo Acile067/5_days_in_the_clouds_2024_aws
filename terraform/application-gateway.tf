@@ -1,5 +1,5 @@
 resource aws_lb main {
-  name               = "main_application_gateway"
+  name               = "mainapplicationgateway"
   internal           = false
   load_balancer_type = "application"
 
