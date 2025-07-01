@@ -16,4 +16,6 @@ dotnet --info
 echo 'export DOTNET_ROOT=$HOME/dotnet' >> .bash_profile
 echo 'export PATH=$PATH:$HOME/dotnet' >> .bash_profile
 
+sudo dnf install -y libicu
+
 dnf install -y awscli
