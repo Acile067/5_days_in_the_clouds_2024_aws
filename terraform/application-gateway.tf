@@ -8,7 +8,7 @@ resource aws_lb main {
 }
 
 resource aws_lb_target_group main {
-  name     = "main_target_group"
+  name     = "maintargetgroup"
   port     = 5000
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
