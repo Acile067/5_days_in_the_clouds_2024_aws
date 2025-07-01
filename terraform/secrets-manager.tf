@@ -1,5 +1,5 @@
 resource aws_secretsmanager_secret main {
-  name = "main-ssh-private-key-v2"
+  name = "main-ssh-private-key-v3"
 }
 
 resource aws_secretsmanager_secret_version main {

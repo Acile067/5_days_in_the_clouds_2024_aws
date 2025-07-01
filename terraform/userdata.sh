@@ -3,7 +3,7 @@
 dnf update -y
 
 # Instalacija osnovnih alata
-dnf install -y wget curl unzip git jq zip
+dnf install -y wget unzip git jq zip
 
 # Preuzimanje .NET 9 runtime
 wget https://builds.dotnet.microsoft.com/dotnet/aspnetcore/Runtime/9.0.6/aspnetcore-runtime-9.0.6-linux-x64.tar.gz
