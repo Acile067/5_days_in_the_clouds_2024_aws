@@ -1,0 +1,14 @@
+[Unit]
+Description=My ASP.NET Web API
+
+[Service]
+WorkingDirectory=/home/ec2-user/5_days_in_the_clouds_2024
+ExecStart=/home/ec2-user/5_days_in_the_clouds_2024/5_days_in_the_clouds_2024.API
+Restart=always
+User=ec2-user
+Environment=DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
+Environment=ASPNETCORE_ENVIRONMENT=Development
+Environment=ASPNETCORE_URLS=http://0.0.0.0:5000
+
+[Install]
+WantedBy=multi-user.target

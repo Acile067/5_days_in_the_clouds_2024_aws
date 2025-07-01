@@ -52,3 +52,33 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
+
+      - name: Copy files to ec2 instance
+        env:
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+          EC2_USERNAME: ${{ secrets.EC2_USERNAME }}
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+        run: |
+          mkdir -p ~/.ssh
+
+          ssh-keyscan -H "${{ secrets.EC2_HOST }}" >> ~/.ssh/known_hosts
+
+          echo "$EC2_SSH_KEY" > ssh_key.pem
+          chmod 600 ssh_key.pem
+
+          ssh -i ssh_key.pem ${EC2_USERNAME}@${EC2_HOST} '
+          sudo systemctl stop myapi || true
+          rm -rf ~/5_days_in_the_clouds_2024/*
+          '
+
+          scp -i ssh_key.pem -r ${{ env.WORKING_DIRECTORY }}/publish/* $EC2_USERNAME:~/5_days_in_the_clouds_2024
+
+          scp -i ssh_key.pem ${{ env.WORKING_DIRECTORY }}/5_days_in_the_clouds_2024.API/myapi.service ${EC2_USERNAME}@${EC2_HOST}:~/5_days_in_the_clouds_2024/
+
+          ssh -i ssh_key.pem ${EC2_USERNAME}@${EC2_HOST} '
+           sudo cp ~/5_days_in_the_clouds_2024/myapi.service /etc/systemd/system/
+           sudo chmod +x ~/5_days_in_the_clouds_2024/5_days_in_the_clouds_2024.API
+           sudo systemctl daemon-reload
+           sudo systemctl enable myapi
+           sudo systemctl restart myapi
+          '
