@@ -69,14 +69,14 @@ jobs:
           echo "$EC2_SSH_KEY" > ssh_key.pem
           chmod 600 ssh_key.pem
 
-          ssh -i ssh_key.pem ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }} '
+          ssh -i "ssh_key.pem" ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }} '
           if systemctl list-units --type=service | grep -q myapi.service; then
             sudo systemctl stop myapi
           fi
           rm -rf ~/5_days_in_the_clouds_2024/*
           '
 
-          scp -i ssh_key.pem -r ${{ env.WORKING_DIRECTORY }}/publish/* ${{ vars.EC2_USERNAME }}:~/5_days_in_the_clouds_2024
+          scp -i "ssh_key.pem" -r ${{ env.WORKING_DIRECTORY }}/publish/* ${{ vars.EC2_USERNAME }}:~/5_days_in_the_clouds_2024
 
           scp -i ssh_key.pem ${{ env.WORKING_DIRECTORY }}/5_days_in_the_clouds_2024.API/myapi.service ${{ vars.EC2_USERNAME }}@${{ vars.EC2_HOST }}:~/5_days_in_the_clouds_2024/
 
