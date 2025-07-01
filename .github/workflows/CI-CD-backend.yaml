@@ -67,7 +67,9 @@ jobs:
           chmod 600 ssh_key.pem
 
           ssh -i ssh_key.pem ${EC2_USERNAME}@${EC2_HOST} '
-          sudo systemctl stop myapi || true
+          if systemctl list-units --type=service | grep -q myapi.service; then
+            sudo systemctl stop myapi
+          fi
           rm -rf ~/5_days_in_the_clouds_2024/*
           '
 
