@@ -16,3 +16,7 @@ resource aws_route_table_association rta2 {
   subnet_id      = aws_subnet.database.id
   route_table_id = aws_route_table.main.id
 }
+resource aws_route_table_association rta3 {
+  subnet_id      = aws_subnet.database_az2.id
+  route_table_id = aws_route_table.main.id
+}
