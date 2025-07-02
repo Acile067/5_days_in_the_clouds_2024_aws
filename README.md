@@ -24,7 +24,7 @@ As part of the solution, an **Lambda Function** was implemented to automatically
 
 1. **Clone the project**:
    ```bash
-   git clone https://github.com/Acile067/5_days_in_the_clouds_2024_azure.git
+   git clone https://github.com/Acile067/5_days_in_the_clouds_2024_aws.git
    cd 5_days_in_the_clouds_2024-api/5_days_in_the_clouds_2024.API
    ```
 
@@ -35,10 +35,10 @@ As part of the solution, an **Lambda Function** was implemented to automatically
    ```
     The application will run on port **7030**.
 
-3. **Dotnet CLI AZ-Function**:
+3. **Dotnet CLI AWS-Lambda**:
    
     ```bash
-   cd 5_days_in_the_clouds_2024-az-functions/MatchStorage.Function/MatchStorage.Function
+   cd 5_days_in_the_clouds_2024-aws-lambda-match-storage//MatchStorage
    dotnet run
    ```
     The function will run on port **7132**.
