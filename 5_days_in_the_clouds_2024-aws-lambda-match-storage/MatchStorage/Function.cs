@@ -12,36 +12,27 @@ namespace MatchStorage;
 
 public class Function
 {
-
     private readonly IAmazonS3 _s3Client;
     private readonly string _bucketName;
 
     public Function()
     {
-        _s3Client = new AmazonS3Client(); // default credentials + region
+        _s3Client = new AmazonS3Client(); // koristi podrazumevane kredencijale i region
         _bucketName = Environment.GetEnvironmentVariable("BUCKET_NAME") ?? throw new Exception("Missing BUCKET_NAME env variable");
     }
 
-    public async Task<APIGatewayProxyResponse> FunctionHandler(APIGatewayProxyRequest request, ILambdaContext context)
+    // Handler koji prima direktno objekat Match
+    public async Task FunctionHandler(Match match, ILambdaContext context)
     {
+        if (match == null)
+        {
+            throw new ArgumentNullException(nameof(match), "Match object is null.");
+        }
+
         try
         {
-            // Deserialize Match object from body
-            var match = JsonSerializer.Deserialize<Match>(request.Body);
-
-            if (match == null)
-            {
-                return new APIGatewayProxyResponse
-                {
-                    StatusCode = (int)HttpStatusCode.BadRequest,
-                    Body = "Invalid Match data."
-                };
-            }
-
-            // Convert to JSON string
             var json = JsonSerializer.Serialize(match);
 
-            // Generate a unique file name
             var key = $"matches/{match.Id}_{DateTime.UtcNow:yyyyMMddHHmmss}.json";
 
             var putRequest = new PutObjectRequest
@@ -54,20 +45,12 @@ public class Function
 
             await _s3Client.PutObjectAsync(putRequest);
 
-            return new APIGatewayProxyResponse
-            {
-                StatusCode = (int)HttpStatusCode.OK,
-                Body = $"Match saved to S3 as {key}"
-            };
+            context.Logger.LogInformation($"Match saved to S3 as {key}");
         }
         catch (Exception ex)
         {
             context.Logger.LogError($"Error saving match: {ex.Message}");
-            return new APIGatewayProxyResponse
-            {
-                StatusCode = (int)HttpStatusCode.InternalServerError,
-                Body = "Error saving match."
-            };
+            throw;
         }
     }
 }

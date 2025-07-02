@@ -15,11 +15,13 @@ namespace _5_days_in_the_clouds_2024.Application.Features.Match.Commands.CreateM
         private readonly IMatchRepository _matchRepository;
         private readonly ITeamRepository _teamRepository;
         private readonly IMapper _mapper;
-        public CreateMatchCommandHandler(IMatchRepository matchRepository, IMapper mapper, ITeamRepository teamRepository)
+        private readonly IMatchUploaderService _matchUploaderService;
+        public CreateMatchCommandHandler(IMatchRepository matchRepository, IMapper mapper, ITeamRepository teamRepository, IMatchUploaderService matchUploaderService)
         {
             _matchRepository = matchRepository;
             _mapper = mapper;
             _teamRepository = teamRepository;
+            _matchUploaderService = matchUploaderService;
         }
 
         public async Task<CreateMatchResponse> Handle(CreateMatchCommand request, CancellationToken cancellationToken)
@@ -59,6 +61,8 @@ namespace _5_days_in_the_clouds_2024.Application.Features.Match.Commands.CreateM
             };
 
             var ret = await _matchRepository.CreateAsync(match);
+
+            await _matchUploaderService.UploadMatchAsync(match);
 
             return _mapper.Map<CreateMatchResponse>(ret);
         }
