@@ -1,3 +1,3 @@
-resource aws_s3_bucket main {
+resource aws_s3_bucket match_storage {
   bucket = "levi9eteamsmatchstorage"
 }

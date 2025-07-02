@@ -1,0 +1,48 @@
+name: CI-CD Lambda Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ci-cd-lambda:
+    runs-on: ubuntu-latest
+
+    env:
+      WORKING_DIRECTORY: ./5_days_in_the_clouds_2024-aws-lambda-match-storage
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Configure Aws Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Install NuGet packages
+        run: dotnet restore ${{ env.WORKING_DIRECTORY }}/MatchStorage/MatchStorage.csproj
+
+      - name: Build main project
+        run: dotnet build ${{ env.WORKING_DIRECTORY }}/MatchStorage/MatchStorage.csproj --configuration Release
+
+      - name: Package Lambda function
+        run: |
+          dotnet tool install -g Amazon.Lambda.Tools
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet lambda package \
+            --project-location ${{ env.WORKING_DIRECTORY }}/MatchStorage \
+            --configuration Release \
+            --framework net8.0 \
+            --output-package ${{ env.WORKING_DIRECTORY }}/lambda.zip
+
+      - name: Deploy Lambda code
+        run: |
+          aws lambda update-function-code \
+            --function-name MatchStorageFunction \
+            --zip-file fileb://${{ env.WORKING_DIRECTORY }}/lambda.zip
