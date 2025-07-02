@@ -11,7 +11,4 @@ resource aws_lambda_function match_storage {
       BUCKET_NAME = aws_s3_bucket.match_storage.bucket
     }
   }
-  lifecycle {
-    ignore_changes = [filename, source_code_hash]
-  }
 }
